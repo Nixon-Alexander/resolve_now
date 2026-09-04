@@ -1,0 +1,1 @@
+DROP COLUMN document_versions;
