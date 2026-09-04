@@ -1,0 +1,23 @@
+[TITLE]
+FAQ (FREQUENTLY ASKED QUESTIONS)
+
+[INTRODUCTION]
+Berikut adalah beberapa pertanyaan yang sering diajukan beserta jawabannya:
+
+[SECTION]
+Pertanyaan 1
+
+Q: Bagaimana cara melacak status pengiriman pesanan saya?
+A: Anda dapat memasukkan nomor resi yang tertera di halaman riwayat transaksi pada situs web ekspedisi terkait atau melalui fitur lacak pesanan di akun Anda.
+
+[SECTION]
+Pertanyaan 2
+
+Q: Bisakah saya membatalkan pesanan yang sudah dibayar?
+A: Pesanan dapat dibatalkan selama belum memasuki status "Sedang Dikemas" atau "Diserahkan ke Kurir". Silakan hubungi layanan pelanggan segera.
+
+[SECTION]
+Pertanyaan 3
+
+Q: Apa yang harus saya lakukan jika produk tiba dalam keadaan rusak?
+A: Segera buat video unboxing dan foto kondisi paket, lalu ajukan komplain melalui menu pusat bantuan kami dalam waktu maksimal 2 x 24 jam setelah paket diterima.
