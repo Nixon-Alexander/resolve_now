@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/Nixon-Alexander/resolve_now.git/config"
 	"github.com/Nixon-Alexander/resolve_now.git/helper"
@@ -33,7 +34,6 @@ func (cr *ChatRepository) Search(
 	req *model.ChatRequest,
 ) (*model.ChatResponse, error) {
 
-	// Embed pertanyaan
 	embedding, err := helper.EmbedText(c, req.Message)
 
 	if err != nil {
@@ -46,13 +46,7 @@ func (cr *ChatRepository) Search(
 		limit = uint64(req.Limit)
 	}
 
-	// Search ke qdrant, difilter by company_id biar tidak bocor antar tenant
-	results, err := cr.qdrant.SearchChunks(
-		c,
-		embedding,
-		req.CompanyId,
-		limit,
-	)
+	results, err := cr.qdrant.SearchChunks(c, embedding, req.CompanyId, limit)
 
 	if err != nil {
 		cr.logger.Error("ERROR SEARCHING QDRANT", "error", err)
@@ -65,8 +59,8 @@ func (cr *ChatRepository) Search(
 		return nil, errors.New("tidak ditemukan informasi yang relevan")
 	}
 
-	// Susun sources
 	sources := make([]model.ChatSourceChunk, 0, len(results))
+	var contextBuilder strings.Builder
 
 	for _, r := range results {
 		sources = append(sources, model.ChatSourceChunk{
@@ -76,13 +70,21 @@ func (cr *ChatRepository) Search(
 			Content:           r.Content,
 			Score:             r.Score,
 		})
+
+		contextBuilder.WriteString(r.Content)
+		contextBuilder.WriteString("\n\n---\n\n")
 	}
 
-	// results dari Qdrant sudah terurut dari score tertinggi -> ambil yang pertama sebagai "jawaban" utama
-	response := &model.ChatResponse{
-		Answer:  results[0].Content,
+	// Generate jawaban natural pakai LLM, berdasarkan chunk yang ditemukan
+	answer, err := helper.AskLLM(c, req.Message, contextBuilder.String())
+
+	if err != nil {
+		cr.logger.Error("ERROR ASKING LLM", "error", err)
+		answer = results[0].Content
+	}
+
+	return &model.ChatResponse{
+		Answer:  answer,
 		Sources: sources,
-	}
-
-	return response, nil
+	}, nil
 }

@@ -33,8 +33,10 @@ func main() {
 
 	if err := qdrants.CreateChunksCollection(); err != nil {
 		logger.Error("Error creating qdrant chunks collection", "error", err)
+		return
 	}
 	logger.Info("QDrant is connected")
+
 	// Injection
 	db, _ := config.InitMySqlDatabase(logger).Connect()
 
