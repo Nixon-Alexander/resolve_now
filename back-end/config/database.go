@@ -25,7 +25,7 @@ func (mysqlDB *MySQLDatabase) Connect() (*MySQLDatabase, error) {
 	user := os.Getenv("DB_USER")
 	password := os.Getenv("DB_PASSWORD")
 	connection := os.Getenv("DB_CONNECTION")
-	host := os.Getenv("HOST")
+	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
 	name := os.Getenv("DB_NAME")
 

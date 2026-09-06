@@ -18,7 +18,7 @@ func isAlreadyExistsErr(err error) bool {
 
 func InitQDrant() (*QDrant, error) {
 	client, err := qdrant.NewClient(&qdrant.Config{
-		Host: "localhost",
+		Host: "qdrant",
 		Port: 6334,
 	})
 
