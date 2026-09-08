@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"path/filepath"
+	"sort"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
@@ -36,9 +38,52 @@ func (mysqlDB *MySQLDatabase) Connect() (*MySQLDatabase, error) {
 		return nil, err
 	}
 
+	if err := db.Ping(); err != nil {
+		mysqlDB.logger.Error("Database cannot ping", "error", err)
+		db.Close()
+
+		return nil, err
+	}
+
 	mysqlDB.db = db
 	mysqlDB.logger.Info("Database connect successfully", "conn string", connString)
 	return mysqlDB, nil
+}
+
+func (mysqlDB *MySQLDatabase) UpDB() error {
+	migrationPath := os.Getenv("DB_MIGRATION_PATH")
+	files, err := filepath.Glob(migrationPath)
+	if err != nil {
+		mysqlDB.logger.Error("Error getting migration files", "error", err)
+		return err
+	}
+
+	if len(files) == 0 {
+		mysqlDB.logger.Info("No migration file found")
+		return nil
+	}
+
+	sort.Strings(files)
+
+	for _, file := range files {
+		mysqlDB.logger.Info("Running migration", "file", file)
+
+		content, err := os.ReadFile(file)
+		if err != nil {
+			mysqlDB.logger.Error("Error reading migration file", "file", file, "error", err)
+			return err
+		}
+
+		_, err = mysqlDB.db.Exec(string(content))
+		if err != nil {
+			mysqlDB.logger.Error("Error executing migration file", "file", file, "error", err)
+			return err
+		}
+
+		mysqlDB.logger.Info("Migration success", "file", file)
+	}
+
+	return nil
 }
 
 func (mysqlDB *MySQLDatabase) BeginTransaction(ctx *gin.Context) (*sql.Tx, error) {
