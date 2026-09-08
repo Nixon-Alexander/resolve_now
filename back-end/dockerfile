@@ -9,4 +9,4 @@ EXPOSE 8000
 
 VOLUME [ "/upload/documents" ]
 
-CMD ["go", "run", "main.go"]
+CMD ["go", "run", "main.go", "--env", "./config/.env.prod"]
