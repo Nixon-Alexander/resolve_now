@@ -9,16 +9,16 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     env_file:
-      - ./back-end/config/.env.dev
+      - ./back-end/config/.env.prod
     environment:
       - PORT=8000
-      - HOST=0.0.0.0
-      - DB_HOST=host.docker.internal
+      - HOST=localhost
+      - DB_HOST=${DB_HOST}
       - DB_USER=user
-      - DB_PASSWORD=user_localhost
+      - DB_PASSWORD=${DB_PASSWORD}
       - DB_CONNECTION=tcp
       - DB_PORT=3306
-      - DB_NAME=resolve_now
+      - DB_NAME=${DB_NAME}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - QDRANT_API_KEY=${QDRANT_API_KEY}
     ports:
