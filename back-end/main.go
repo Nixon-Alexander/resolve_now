@@ -39,6 +39,11 @@ func main() {
 
 	// Injection
 	db, _ := config.InitMySqlDatabase(logger).Connect()
+	err = db.UpDB()
+	if err != nil {
+		logger.Error("Error running migration", "error", err)
+		return
+	}
 
 	companyRepo := repository.InitCompanyRepository(db, logger)
 	companyController := controller.InitCompanyController(companyRepo, logger)
