@@ -34,7 +34,7 @@ pipeline {
             }
         }
 
-        stage('Prepare Environment') {
+        stage('Prepare Global Environment') {
             steps {
                 bat '''
                     if not exist ".env" type nul > ".env"
@@ -52,6 +52,30 @@ pipeline {
                         echo DB_NAME=resolve_now
                         echo QDRANT_HOST=localhost
                     ) > ".env"
+
+                    echo Environment file created.
+                '''
+            }
+        }
+
+        stage('Prepare Back End Environment') {
+            steps {
+                bat '''
+                    if not exist "./back-end/config" mkdir "./back-end/config" 
+
+                    (
+                        echo GEMINI_API_KEY=%GEMINI_API_KEY%
+                        echo QDRANT_API_KEY=%QDRANT_API_KEY%
+                        echo PORT=8000
+                        echo HOST=localhost
+                        echo DB_HOST=localhost
+                        echo DB_USER=user
+                        echo DB_PASSWORD=user_localhost
+                        echo DB_CONNECTION=tcp
+                        echo DB_PORT=3306
+                        echo DB_NAME=resolve_now
+                        echo QDRANT_HOST=localhost
+                    ) > "./back-end/config/.env.dev"
 
                     echo Environment file created.
                 '''
