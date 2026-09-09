@@ -37,7 +37,7 @@ pipeline {
         stage('Prepare Environment') {
             steps {
                 bat '''
-                    if not exist ".env" touch .env
+                    if not exist ".env" type nul > ".env"
 
                     (
                         echo GEMINI_API_KEY=%GEMINI_API_KEY%
