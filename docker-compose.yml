@@ -9,7 +9,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     env_file:
-      - ./back-end/config/.env.dev
+      - .env
     environment:
       - PORT=8000
       - HOST=localhost
