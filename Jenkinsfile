@@ -37,12 +37,21 @@ pipeline {
         stage('Prepare Environment') {
             steps {
                 bat '''
-                    if not exist "back-end\\config" mkdir "back-end\\config"
+                    if not exist ".env" touch .env
 
                     (
                         echo GEMINI_API_KEY=%GEMINI_API_KEY%
                         echo QDRANT_API_KEY=%QDRANT_API_KEY%
-                    ) > "back-end\\config\\.env.dev"
+                        echo PORT=8000
+                        echo HOST=localhost
+                        echo DB_HOST=localhost
+                        echo DB_USER=user
+                        echo DB_PASSWORD=user_localhost
+                        echo DB_CONNECTION=tcp
+                        echo DB_PORT=3306
+                        echo DB_NAME=resolve_now
+                        echo QDRANT_HOST=localhost
+                    ) > ".env"
 
                     echo Environment file created.
                 '''
