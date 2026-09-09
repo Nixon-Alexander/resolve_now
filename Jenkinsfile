@@ -50,6 +50,7 @@ pipeline {
                         echo DB_CONNECTION=tcp
                         echo DB_PORT=3306
                         echo DB_NAME=resolve_now
+                        echo DB_MIGRATION_PATH=./migration/*.up.sql
                         echo QDRANT_HOST=localhost
                     ) > ".env"
 
@@ -74,6 +75,7 @@ pipeline {
                         echo DB_CONNECTION=tcp
                         echo DB_PORT=3306
                         echo DB_NAME=resolve_now
+                        echo DB_MIGRATION_PATH=./migration/*.up.sql
                         echo QDRANT_HOST=localhost
                     ) > "./back-end/config/.env.dev"
 

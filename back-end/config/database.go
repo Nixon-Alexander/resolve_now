@@ -3,6 +3,7 @@ package config
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -33,6 +34,7 @@ func (mysqlDB *MySQLDatabase) Connect() (*MySQLDatabase, error) {
 
 	connString := fmt.Sprintf("%s:%s@%s(%s:%s)/%s?parseTime=true", user, password, connection, host, port, name)
 	db, err := sql.Open("mysql", connString)
+	mysqlDB.logger.Info("Connstring", "connection", connString)
 	if err != nil {
 		mysqlDB.logger.Error("Database cannot connect", "error", err)
 		return nil, err
@@ -60,7 +62,7 @@ func (mysqlDB *MySQLDatabase) UpDB() error {
 
 	if len(files) == 0 {
 		mysqlDB.logger.Info("No migration file found")
-		return nil
+		return errors.New("No migration file found")
 	}
 
 	sort.Strings(files)
@@ -75,6 +77,7 @@ func (mysqlDB *MySQLDatabase) UpDB() error {
 		}
 
 		_, err = mysqlDB.db.Exec(string(content))
+		mysqlDB.logger.Info("Migration content", "file", file, "content", string(content))
 		if err != nil {
 			mysqlDB.logger.Error("Error executing migration file", "file", file, "error", err)
 			return err

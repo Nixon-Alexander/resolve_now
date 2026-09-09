@@ -38,7 +38,12 @@ func main() {
 	logger.Info("QDrant is connected")
 
 	// Injection
-	db, _ := config.InitMySqlDatabase(logger).Connect()
+	db, err := config.InitMySqlDatabase(logger).Connect()
+	if err != nil {
+		logger.Error("Database connection failed", "error", err)
+		return
+	}
+
 	err = db.UpDB()
 	if err != nil {
 		logger.Error("Error running migration", "error", err)
