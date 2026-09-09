@@ -27,9 +27,15 @@ jobs:
             mkdir -p back-end/config
 
             cat > back-end/config/.env.prod <<EOF
-            DB_HOST=${{ secrets.DB_HOST }}
+            PORT=${{ secrets.PORT }}
+            HOST=${{ secrets.HOST }}
+            DB_USER=${{ secrets.USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_CONNECTION=${{ secrets.DB_CONNECTION }}
+            DB_PORT=${{ secrets.DB_PORT }}
             DB_NAME=${{ secrets.DB_NAME }}
+            DB_HOST=${{ secrets.DB_HOST }}
+            DB_MIGRATION_PATH=${{ secrets.DB_MIGRATION_PATH }}
             GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
             QDRANT_API_KEY=${{ secrets.QDRANT_API_KEY }}
             EOF

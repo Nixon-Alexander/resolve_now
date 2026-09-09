@@ -2,6 +2,7 @@ package config
 
 import (
 	"context"
+	"os"
 	"strings"
 
 	"github.com/Nixon-Alexander/resolve_now.git/model"
@@ -18,7 +19,7 @@ func isAlreadyExistsErr(err error) bool {
 
 func InitQDrant() (*QDrant, error) {
 	client, err := qdrant.NewClient(&qdrant.Config{
-		Host: "qdrant",
+		Host: os.Getenv("QDRANT_HOST"),
 		Port: 6334,
 	})
 
