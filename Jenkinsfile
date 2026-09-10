@@ -183,7 +183,7 @@ pipeline {
                     echo "Checking backend..."
 
                     curl --fail --silent --show-error \
-                        http://localhost:8000/api/v1/get-companies
+                        http://192.168.11.134:8000/api/v1/get-companies
 
                     echo
                     echo "Backend is OK."
@@ -191,7 +191,7 @@ pipeline {
                     echo "Checking frontend..."
 
                     curl --fail --silent --show-error \
-                        http://localhost:3000/
+                        http://192.168.11.134:3000/
 
                     echo
                     echo "Frontend is OK."
