@@ -18,7 +18,7 @@ pipeline {
             steps {
                 checkout scm
 
-                bat '''
+                sh '''
                     git log -1 --oneline
                     echo Repository checkout completed.
                 '''
@@ -27,7 +27,7 @@ pipeline {
 
         stage('Check Docker') {
             steps {
-                bat '''
+                sh '''
                     docker --version
                     docker compose version
                 '''
@@ -36,7 +36,7 @@ pipeline {
 
         stage('Prepare Global Environment') {
             steps {
-                bat '''
+                sh '''
                     if not exist ".env" type nul > ".env"
 
                     (
@@ -61,7 +61,7 @@ pipeline {
 
         stage('Prepare Dev Back End Environment') {
             steps {
-                bat '''
+                sh '''
                     if not exist "./back-end/config" mkdir "./back-end/config" 
 
                     (
@@ -86,7 +86,7 @@ pipeline {
 
         stage('Prepare Prod Back End Environment') {
             steps {
-                bat '''
+                sh '''
                     if not exist "./back-end/config" mkdir "./back-end/config" 
 
                     (
@@ -111,7 +111,7 @@ pipeline {
 
         stage('Create network') {
             steps {
-                bat '''
+                sh '''
                     echo Checking network...
 
                     docker network inspect resolve_now_default >nul 2>&1
@@ -141,7 +141,7 @@ pipeline {
 
         stage('Validate Compose') {
             steps {
-                bat '''
+                sh '''
                     docker compose config
                 '''
             }
@@ -149,7 +149,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                bat '''
+                sh '''
                     docker compose build
                 '''
             }
@@ -157,7 +157,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                bat '''
+                sh '''
                     docker compose down --remove-orphans
 
                     docker compose up -d --remove-orphans
@@ -167,7 +167,7 @@ pipeline {
 
         stage('Check Containers') {
             steps {
-                bat '''
+                sh '''
                     docker compose ps
                 '''
             }
@@ -179,7 +179,7 @@ pipeline {
                     sleep(time: 15, unit: 'SECONDS')
                 }
 
-                bat '''
+                sh '''
                     echo Checking backend...
 
                     curl.exe --fail --silent --show-error  http://localhost:8000/api/v1/get-companies || exit /b 1
