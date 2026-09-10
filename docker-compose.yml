@@ -8,10 +8,13 @@ services:
       - ./back-end/migration:/app/migration
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    networks:
+      - resolve_now_default
     env_file:
       - .env
+      - ./back-end/config/.env.dev
     environment:
-      - PORT=8000
+      - PORT=${PORT}
       - HOST=localhost
       - DB_HOST=${DB_HOST}
       - DB_USER=user
@@ -21,6 +24,7 @@ services:
       - DB_NAME=${DB_NAME}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - QDRANT_API_KEY=${QDRANT_API_KEY}
+      - QDRANT_HOST=${QDRANT_HOST}
     ports:
       - "8000:8000"
     restart: unless-stopped
@@ -31,4 +35,10 @@ services:
       dockerfile: dockerfile
     ports:
       - "3000:5173"
+    networks:
+      - resolve_now_default
     restart: unless-stopped
+
+networks:
+  default:
+    name: resolve_now_default

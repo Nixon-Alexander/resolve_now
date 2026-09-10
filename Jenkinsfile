@@ -44,14 +44,14 @@ pipeline {
                         echo QDRANT_API_KEY=%QDRANT_API_KEY%
                         echo PORT=8000
                         echo HOST=localhost
-                        echo DB_HOST=localhost
+                        echo DB_HOST=host.docker.internal
                         echo DB_USER=user
                         echo DB_PASSWORD=user_localhost
                         echo DB_CONNECTION=tcp
                         echo DB_PORT=3306
                         echo DB_NAME=resolve_now
                         echo DB_MIGRATION_PATH=./migration/*.up.sql
-                        echo QDRANT_HOST=localhost
+                        echo QDRANT_HOST=upbeat_roentgen
                     ) > ".env"
 
                     echo Environment file created.
@@ -76,10 +76,40 @@ pipeline {
                         echo DB_PORT=3306
                         echo DB_NAME=resolve_now
                         echo DB_MIGRATION_PATH=./migration/*.up.sql
-                        echo QDRANT_HOST=localhost
+                        echo QDRANT_HOST=upbeat_roentgen
                     ) > "./back-end/config/.env.dev"
 
                     echo Environment file created.
+                '''
+            }
+        }
+
+        stage('Create network') {
+            steps {
+                bat '''
+                    echo Checking network...
+
+                    docker network inspect resolve_now_default >nul 2>&1
+
+                    IF ERRORLEVEL 1 (
+                        echo Network belum ada, membuat...
+                        docker network create resolve_now_default
+                    ) ELSE (
+                        echo Network sudah ada.
+                    )
+
+                    echo Connecting container...
+
+                    docker network inspect resolve_now_default --format="{{json .Containers}}" | findstr "upbeat_roentgen" >nul 2>&1
+
+                    IF ERRORLEVEL 1 (
+                        echo Container belum terhubung, connecting...
+                        docker network connect resolve_now_default upbeat_roentgen
+                    ) ELSE (
+                        echo Container sudah terhubung ke network.
+                    )
+
+                    docker network ls
                 '''
             }
         }
