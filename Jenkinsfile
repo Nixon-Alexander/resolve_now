@@ -38,20 +38,20 @@ pipeline {
         stage('Prepare Global Environment') {
             steps {
                 sh '''
-                    cat > .env <<EOF
-                    GEMINI_API_KEY=${GEMINI_API_KEY}
-                    QDRANT_API_KEY=${QDRANT_API_KEY}
-                    PORT=8000
-                    HOST=0.0.0.0
-                    DB_HOST=host.docker.internal
-                    DB_USER=user
-                    DB_PASSWORD=user_localhost
-                    DB_CONNECTION=tcp
-                    DB_PORT=3306
-                    DB_NAME=resolve_now
-                    DB_MIGRATION_PATH=./migration/*.up.sql
-                    QDRANT_HOST=qdrant
-                    EOF
+                    printf '%s\\n' \
+                        "GEMINI_API_KEY=${GEMINI_API_KEY}" \
+                        "QDRANT_API_KEY=${QDRANT_API_KEY}" \
+                        "PORT=8000" \
+                        "HOST=0.0.0.0" \
+                        "DB_HOST=host.docker.internal" \
+                        "DB_USER=user" \
+                        "DB_PASSWORD=user_localhost" \
+                        "DB_CONNECTION=tcp" \
+                        "DB_PORT=3306" \
+                        "DB_NAME=resolve_now" \
+                        "DB_MIGRATION_PATH=./migration/*.up.sql" \
+                        "QDRANT_HOST=upbeat_roentgen" \
+                        > .env
 
                     echo "Global environment file created."
                 '''
@@ -63,20 +63,20 @@ pipeline {
                 sh '''
                     mkdir -p ./back-end/config
 
-                    cat > ./back-end/config/.env.dev <<EOF
-                    GEMINI_API_KEY=${GEMINI_API_KEY}
-                    QDRANT_API_KEY=${QDRANT_API_KEY}
-                    PORT=8000
-                    HOST=localhost
-                    DB_HOST=localhost
-                    DB_USER=user
-                    DB_PASSWORD=user_localhost
-                    DB_CONNECTION=tcp
-                    DB_PORT=3306
-                    DB_NAME=resolve_now
-                    DB_MIGRATION_PATH=./migration/*.up.sql
-                    QDRANT_HOST=qdrant
-                    EOF
+                    printf '%s\\n' \
+                        "GEMINI_API_KEY=${GEMINI_API_KEY}" \
+                        "QDRANT_API_KEY=${QDRANT_API_KEY}" \
+                        "PORT=8000" \
+                        "HOST=localhost" \
+                        "DB_HOST=localhost" \
+                        "DB_USER=user" \
+                        "DB_PASSWORD=user_localhost" \
+                        "DB_CONNECTION=tcp" \
+                        "DB_PORT=3306" \
+                        "DB_NAME=resolve_now" \
+                        "DB_MIGRATION_PATH=./migration/*.up.sql" \
+                        "QDRANT_HOST=upbeat_roentgen" \
+                        > ./back-end/config/.env.dev
 
                     echo "Dev environment file created."
                 '''
@@ -88,20 +88,20 @@ pipeline {
                 sh '''
                     mkdir -p ./back-end/config
 
-                    cat > ./back-end/config/.env.prod <<EOF
-                    GEMINI_API_KEY=${GEMINI_API_KEY}
-                    QDRANT_API_KEY=${QDRANT_API_KEY}
-                    PORT=8000
-                    HOST=0.0.0.0
-                    DB_HOST=host.docker.internal
-                    DB_USER=user
-                    DB_PASSWORD=user_localhost
-                    DB_CONNECTION=tcp
-                    DB_PORT=3306
-                    DB_NAME=resolve_now
-                    DB_MIGRATION_PATH=./migration/*.up.sql
-                    QDRANT_HOST=qdrant
-                    EOF
+                    printf '%s\\n' \
+                        "GEMINI_API_KEY=${GEMINI_API_KEY}" \
+                        "QDRANT_API_KEY=${QDRANT_API_KEY}" \
+                        "PORT=8000" \
+                        "HOST=0.0.0.0" \
+                        "DB_HOST=host.docker.internal" \
+                        "DB_USER=user" \
+                        "DB_PASSWORD=user_localhost" \
+                        "DB_CONNECTION=tcp" \
+                        "DB_PORT=3306" \
+                        "DB_NAME=resolve_now" \
+                        "DB_MIGRATION_PATH=./migration/*.up.sql" \
+                        "QDRANT_HOST=upbeat_roentgen" \
+                        > ./back-end/config/.env.prod
 
                     echo "Prod environment file created."
                 '''
