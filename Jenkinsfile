@@ -59,7 +59,7 @@ pipeline {
             }
         }
 
-        stage('Prepare Back End Environment') {
+        stage('Prepare Dev Back End Environment') {
             steps {
                 bat '''
                     if not exist "./back-end/config" mkdir "./back-end/config" 
@@ -78,6 +78,31 @@ pipeline {
                         echo DB_MIGRATION_PATH=./migration/*.up.sql
                         echo QDRANT_HOST=upbeat_roentgen
                     ) > "./back-end/config/.env.dev"
+
+                    echo Environment file created.
+                '''
+            }
+        }
+
+        stage('Prepare Prod Back End Environment') {
+            steps {
+                bat '''
+                    if not exist "./back-end/config" mkdir "./back-end/config" 
+
+                    (
+                        echo GEMINI_API_KEY=%GEMINI_API_KEY%
+                        echo QDRANT_API_KEY=%QDRANT_API_KEY%
+                        echo PORT=8000
+                        echo HOST=0.0.0.0
+                        echo DB_HOST=host.docker.internal
+                        echo DB_USER=user
+                        echo DB_PASSWORD=user_localhost
+                        echo DB_CONNECTION=tcp
+                        echo DB_PORT=3306
+                        echo DB_NAME=resolve_now
+                        echo DB_MIGRATION_PATH=./migration/*.up.sql
+                        echo QDRANT_HOST=qdrant
+                    ) > "./back-end/config/.env.prod"
 
                     echo Environment file created.
                 '''

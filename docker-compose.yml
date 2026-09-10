@@ -10,19 +10,10 @@ services:
       - "host.docker.internal:host-gateway"
     env_file:
       - .env
-      - ./back-end/config/.env.dev
+      - ./back-end/config/.env.prod
     environment:
       - PORT=${PORT}
       - HOST=${HOST}
-      - DB_HOST=${DB_HOST}
-      - DB_USER=user
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_CONNECTION=tcp
-      - DB_PORT=3306
-      - DB_NAME=${DB_NAME}
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
-      - QDRANT_API_KEY=${QDRANT_API_KEY}
-      - QDRANT_HOST=${QDRANT_HOST}
     ports:
       - "8000:8000"
     restart: unless-stopped
