@@ -180,16 +180,23 @@ pipeline {
                 }
 
                 sh '''
-                    echo "Checking backend..."
+                    echo "=== WHO AM I ==="
+                    whoami
 
+                    echo "=== HOST ==="
+                    hostname
+
+                    echo "=== BACKEND CONTAINER ==="
+                    docker compose ps
+
+                    echo "=== BACKEND CURL ==="
                     curl --fail --silent --show-error \
                         http://192.168.11.134:8000/api/v1/get-companies
 
                     echo
                     echo "Backend is OK."
 
-                    echo "Checking frontend..."
-
+                    echo "=== FRONTEND CURL ==="
                     curl --fail --silent --show-error \
                         http://192.168.11.134:3000/
 
