@@ -191,14 +191,14 @@ pipeline {
 
                     echo "=== BACKEND CURL ==="
                     curl --fail --silent --show-error \
-                        http://192.168.11.134:8000/api/v1/get-companies
+                        http://localhost:8000/api/v1/get-companies
 
                     echo
                     echo "Backend is OK."
 
                     echo "=== FRONTEND CURL ==="
                     curl --fail --silent --show-error \
-                        http://192.168.11.134:3000/
+                        http://localhost:3000/
 
                     echo
                     echo "Frontend is OK."
