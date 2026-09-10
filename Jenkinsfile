@@ -50,7 +50,7 @@ pipeline {
                         "DB_PORT=3306" \
                         "DB_NAME=resolve_now" \
                         "DB_MIGRATION_PATH=./migration/*.up.sql" \
-                        "QDRANT_HOST=upbeat_roentgen" \
+                        "QDRANT_HOST=qdrant" \
                         > .env
 
                     echo "Global environment file created."
@@ -75,7 +75,7 @@ pipeline {
                         "DB_PORT=3306" \
                         "DB_NAME=resolve_now" \
                         "DB_MIGRATION_PATH=./migration/*.up.sql" \
-                        "QDRANT_HOST=upbeat_roentgen" \
+                        "QDRANT_HOST=qdrant" \
                         > ./back-end/config/.env.dev
 
                     echo "Dev environment file created."
@@ -100,7 +100,7 @@ pipeline {
                         "DB_PORT=3306" \
                         "DB_NAME=resolve_now" \
                         "DB_MIGRATION_PATH=./migration/*.up.sql" \
-                        "QDRANT_HOST=upbeat_roentgen" \
+                        "QDRANT_HOST=qdrant" \
                         > ./back-end/config/.env.prod
 
                     echo "Prod environment file created."
