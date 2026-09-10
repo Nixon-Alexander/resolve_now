@@ -13,7 +13,7 @@ services:
       - ./back-end/config/.env.dev
     environment:
       - PORT=${PORT}
-      - HOST=localhost
+      - HOST=${HOST}
       - DB_HOST=${DB_HOST}
       - DB_USER=user
       - DB_PASSWORD=${DB_PASSWORD}
