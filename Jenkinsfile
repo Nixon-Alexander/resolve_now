@@ -14,13 +14,14 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
 
                 sh '''
                     git log -1 --oneline
-                    echo Repository checkout completed.
+                    echo "Repository checkout completed."
                 '''
             }
         }
@@ -37,24 +38,22 @@ pipeline {
         stage('Prepare Global Environment') {
             steps {
                 sh '''
-                    if not exist ".env" type nul > ".env"
+                    cat > .env <<EOF
+                    GEMINI_API_KEY=${GEMINI_API_KEY}
+                    QDRANT_API_KEY=${QDRANT_API_KEY}
+                    PORT=8000
+                    HOST=0.0.0.0
+                    DB_HOST=host.docker.internal
+                    DB_USER=user
+                    DB_PASSWORD=user_localhost
+                    DB_CONNECTION=tcp
+                    DB_PORT=3306
+                    DB_NAME=resolve_now
+                    DB_MIGRATION_PATH=./migration/*.up.sql
+                    QDRANT_HOST=qdrant
+                    EOF
 
-                    (
-                        echo GEMINI_API_KEY=%GEMINI_API_KEY%
-                        echo QDRANT_API_KEY=%QDRANT_API_KEY%
-                        echo PORT=8000
-                        echo HOST=0.0.0.0
-                        echo DB_HOST=host.docker.internal
-                        echo DB_USER=user
-                        echo DB_PASSWORD=user_localhost
-                        echo DB_CONNECTION=tcp
-                        echo DB_PORT=3306
-                        echo DB_NAME=resolve_now
-                        echo DB_MIGRATION_PATH=./migration/*.up.sql
-                        echo QDRANT_HOST=upbeat_roentgen
-                    ) > ".env"
-
-                    echo Environment file created.
+                    echo "Global environment file created."
                 '''
             }
         }
@@ -62,24 +61,24 @@ pipeline {
         stage('Prepare Dev Back End Environment') {
             steps {
                 sh '''
-                    if not exist "./back-end/config" mkdir "./back-end/config" 
+                    mkdir -p ./back-end/config
 
-                    (
-                        echo GEMINI_API_KEY=%GEMINI_API_KEY%
-                        echo QDRANT_API_KEY=%QDRANT_API_KEY%
-                        echo PORT=8000
-                        echo HOST=localhost
-                        echo DB_HOST=localhost
-                        echo DB_USER=user
-                        echo DB_PASSWORD=user_localhost
-                        echo DB_CONNECTION=tcp
-                        echo DB_PORT=3306
-                        echo DB_NAME=resolve_now
-                        echo DB_MIGRATION_PATH=./migration/*.up.sql
-                        echo QDRANT_HOST=upbeat_roentgen
-                    ) > "./back-end/config/.env.dev"
+                    cat > ./back-end/config/.env.dev <<EOF
+                    GEMINI_API_KEY=${GEMINI_API_KEY}
+                    QDRANT_API_KEY=${QDRANT_API_KEY}
+                    PORT=8000
+                    HOST=localhost
+                    DB_HOST=localhost
+                    DB_USER=user
+                    DB_PASSWORD=user_localhost
+                    DB_CONNECTION=tcp
+                    DB_PORT=3306
+                    DB_NAME=resolve_now
+                    DB_MIGRATION_PATH=./migration/*.up.sql
+                    QDRANT_HOST=qdrant
+                    EOF
 
-                    echo Environment file created.
+                    echo "Dev environment file created."
                 '''
             }
         }
@@ -87,53 +86,54 @@ pipeline {
         stage('Prepare Prod Back End Environment') {
             steps {
                 sh '''
-                    if not exist "./back-end/config" mkdir "./back-end/config" 
+                    mkdir -p ./back-end/config
 
-                    (
-                        echo GEMINI_API_KEY=%GEMINI_API_KEY%
-                        echo QDRANT_API_KEY=%QDRANT_API_KEY%
-                        echo PORT=8000
-                        echo HOST=0.0.0.0
-                        echo DB_HOST=host.docker.internal
-                        echo DB_USER=user
-                        echo DB_PASSWORD=user_localhost
-                        echo DB_CONNECTION=tcp
-                        echo DB_PORT=3306
-                        echo DB_NAME=resolve_now
-                        echo DB_MIGRATION_PATH=./migration/*.up.sql
-                        echo QDRANT_HOST=qdrant
-                    ) > "./back-end/config/.env.prod"
+                    cat > ./back-end/config/.env.prod <<EOF
+                    GEMINI_API_KEY=${GEMINI_API_KEY}
+                    QDRANT_API_KEY=${QDRANT_API_KEY}
+                    PORT=8000
+                    HOST=0.0.0.0
+                    DB_HOST=host.docker.internal
+                    DB_USER=user
+                    DB_PASSWORD=user_localhost
+                    DB_CONNECTION=tcp
+                    DB_PORT=3306
+                    DB_NAME=resolve_now
+                    DB_MIGRATION_PATH=./migration/*.up.sql
+                    QDRANT_HOST=qdrant
+                    EOF
 
-                    echo Environment file created.
+                    echo "Prod environment file created."
                 '''
             }
         }
 
-        stage('Create network') {
+        stage('Create Network') {
             steps {
                 sh '''
-                    echo Checking network...
+                    echo "Checking network..."
 
-                    docker network inspect resolve_now_default >nul 2>&1
-
-                    IF ERRORLEVEL 1 (
-                        echo Network belum ada, membuat...
+                    if ! docker network inspect resolve_now_default > /dev/null 2>&1; then
+                        echo "Network belum ada, membuat..."
                         docker network create resolve_now_default
-                    ) ELSE (
-                        echo Network sudah ada.
-                    )
+                    else
+                        echo "Network sudah ada."
+                    fi
 
-                    echo Connecting container...
+                    echo "Connecting Qdrant container..."
 
-                    docker network inspect resolve_now_default --format="{{json .Containers}}" | findstr "upbeat_roentgen" >nul 2>&1
+                    if ! docker network inspect resolve_now_default \
+                        --format='{{json .Containers}}' \
+                        | grep -q "qdrant"; then
 
-                    IF ERRORLEVEL 1 (
-                        echo Container belum terhubung, connecting...
-                        docker network connect resolve_now_default upbeat_roentgen
-                    ) ELSE (
-                        echo Container sudah terhubung ke network.
-                    )
+                        echo "Container belum terhubung, connecting..."
+                        docker network connect resolve_now_default qdrant
 
+                    else
+                        echo "Container sudah terhubung ke network."
+                    fi
+
+                    echo "Docker networks:"
                     docker network ls
                 '''
             }
@@ -180,19 +180,21 @@ pipeline {
                 }
 
                 sh '''
-                    echo Checking backend...
+                    echo "Checking backend..."
 
-                    curl.exe --fail --silent --show-error  http://localhost:8000/api/v1/get-companies || exit /b 1
+                    curl --fail --silent --show-error \
+                        http://localhost:8000/api/v1/get-companies
 
-                    echo.
-                    echo Backend is OK.
+                    echo
+                    echo "Backend is OK."
 
-                    echo Checking frontend...
+                    echo "Checking frontend..."
 
-                    curl.exe --fail --silent --show-error http://localhost:3000/ || exit /b 1
+                    curl --fail --silent --show-error \
+                        http://localhost:3000/
 
-                    echo.
-                    echo Frontend is OK.
+                    echo
+                    echo "Frontend is OK."
                 '''
             }
         }
