@@ -8,8 +8,6 @@ services:
       - ./back-end/migration:/app/migration
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    networks:
-      - resolve_now_default
     env_file:
       - .env
       - ./back-end/config/.env.dev
@@ -35,8 +33,6 @@ services:
       dockerfile: dockerfile
     ports:
       - "3000:5173"
-    networks:
-      - resolve_now_default
     restart: unless-stopped
 
 networks:
