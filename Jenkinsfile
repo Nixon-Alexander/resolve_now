@@ -157,7 +157,7 @@ pipeline {
                 bat '''
                     echo Checking backend...
 
-                    curl.exe --fail --silent --show-error http://localhost:8000/ || exit /b 1
+                    curl.exe --fail --silent --show-error  http://localhost:8000/api/v1/get-companies || exit /b 1
 
                     echo.
                     echo Backend is OK.
