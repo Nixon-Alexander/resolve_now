@@ -43,7 +43,7 @@ pipeline {
                         echo GEMINI_API_KEY=%GEMINI_API_KEY%
                         echo QDRANT_API_KEY=%QDRANT_API_KEY%
                         echo PORT=8000
-                        echo HOST=localhost
+                        echo HOST=0.0.0.0
                         echo DB_HOST=host.docker.internal
                         echo DB_USER=user
                         echo DB_PASSWORD=user_localhost
